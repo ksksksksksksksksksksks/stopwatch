@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
-import { TimerService } from './timer.service';
+import { Subscription } from 'rxjs';
+import { Stopwatch } from './domain/stopwatch';
+import { StopwatchService } from './stopwatch.service';
 
 @Component({
   selector: 'app-root',
@@ -8,9 +10,28 @@ import { TimerService } from './timer.service';
 })
 export class AppComponent {
 
-  constructor(private timerService: TimerService) { }
+  stopwatch!: Stopwatch;
+  startBtn: boolean = true;
+  subscriptions: Subscription = new Subscription();
+
+  constructor(private stopwatchService: StopwatchService) {
+  }
 
   start() {
-    this.timerService.start();
+    this.startBtn = false;
+    this.stopwatchService.start();
+  }
+
+  stop() {
+    this.startBtn = true;
+    this.stopwatchService.reset();
+  }
+
+  wait() {
+  }
+
+  reset() {
+    this.stopwatchService.reset();
+    this.stopwatchService.start();
   }
 }

@@ -9,8 +9,9 @@
     <span class="milliseconds">00</span>
   </div>
   <div class="buttons">
-    <button class="start-stop" (click)="start()">Start</button>
-    <button class="wait">Wait</button>
-    <button class="reset">Reset</button>
+    <button *ngIf="startBtn" class="start-stop" (click)="start()">Start</button>
+    <button *ngIf="!startBtn" class="start-stop" (click)="stop()">Stop</button>
+    <button class="wait" (click)="wait()">Wait</button>
+    <button [disabled]="startBtn" class="reset" (click)="reset()">Reset</button>
   </div>
 </div>
