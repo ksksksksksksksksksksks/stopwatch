@@ -11,18 +11,25 @@ export class StopwatchService {
   stoppedTime: number = this.initialTime;
   timer$: BehaviorSubject<number> = new BehaviorSubject(this.initialTime);
   subscription!: Subscription;
-  timerInterval!: number;
+  timerInterval: number = 0;
   // stopwatchOn: boolean = false;
 
   constructor() { }
 
   // public get stopwatch$(): Observable<Stopwatch> {
+  //   return this.timer$.pipe(
+  //     map((milliseconds: number): Stopwatch => this.msToStopwatch(milliseconds))
+  //   );
   // }
 
   start() {
-    this.subscription = timer(0, 10).pipe(
+    this.subscription = timer(0, 100).pipe(
       map(value => value + this.stoppedTime))
-      .subscribe(this.timer$);
+      .subscribe(val => {
+        console.log('timer:', val); 
+        this.msToStopwatch(val)});
+      // .subscribe(this.timer$);
+      console.log(this.subscription);
     // this.stopwatchOn = true;
   }
 
@@ -33,8 +40,31 @@ export class StopwatchService {
     // this.stopwatchOn = false;
   }
 
-  convertToString(value: number): string {
+  numToString(value: number): string {
     return `${value < 10 ? '0' + value : value}`;
+  }
+
+  msToStopwatch(milliseconds: number): Stopwatch {
+    let hundredth = milliseconds % 10;
+    console.log('hundredth:', hundredth);
+    let ms = hundredth;
+    console.log('ms:', ms);
+    if (ms % 10 === 0) {
+      this.timerInterval = Math.floor(ms / 10);
+    }
+    console.log('timerInterval:', this.timerInterval);
+    let seconds = this.timerInterval % 60;
+    console.log('seconds:', seconds);
+    let hours = Math.floor(ms / 36000);
+    hundredth = ms % 36000;
+    let minutes = Math.floor(hundredth / 600);
+
+    return {
+      hours: this.numToString(hours),
+      minutes: this.numToString(minutes),
+      seconds: this.numToString(seconds),
+      milliseconds: ms + ''
+    };
   }
 
 }
