@@ -25,12 +25,11 @@
             font-size: 50px;
             font-weight: 500;
 
-            &.colon {
+            &.colon, &.ms-colon {
                 width: 55px;
             }
 
             &.ms-colon, &.milliseconds {
-                width: 55px;
                 color: rgb(199, 128, 128);
             }
         }

@@ -7,64 +7,58 @@ import { Stopwatch } from './domain/stopwatch';
 })
 export class StopwatchService {
 
-  initialTime = 0;
+  initialTime: number = 0;
   stoppedTime: number = this.initialTime;
   timer$: BehaviorSubject<number> = new BehaviorSubject(this.initialTime);
   subscription!: Subscription;
-  timerInterval: number = 0;
-  // stopwatchOn: boolean = false;
-
+  secondInterval: number = 0;
   constructor() { }
 
-  // public get stopwatch$(): Observable<Stopwatch> {
-  //   return this.timer$.pipe(
-  //     map((milliseconds: number): Stopwatch => this.msToStopwatch(milliseconds))
-  //   );
-  // }
+  public get stopwatch$(): Observable<Stopwatch> {
+    return this.timer$.pipe(
+      map((milliseconds: number): Stopwatch => this.getTime(milliseconds))
+    );
+  }
 
   start() {
     this.subscription = timer(0, 100).pipe(
-      map(value => value + this.stoppedTime))
-      .subscribe(val => {
-        console.log('timer:', val); 
-        this.msToStopwatch(val)});
-      // .subscribe(this.timer$);
-      console.log(this.subscription);
-    // this.stopwatchOn = true;
+      map((value: number): number => {
+        console.log(value + this.stoppedTime);
+        return value + this.stoppedTime;
+      }))
+      .subscribe(this.timer$);
   }
 
   reset() {
     this.subscription.unsubscribe();
     this.stoppedTime = this.initialTime;
     this.timer$.next(this.initialTime);
-    // this.stopwatchOn = false;
   }
 
-  numToString(value: number): string {
+  wait() {
+    this.stoppedTime = this.timer$.value;
+    this.subscription.unsubscribe();
+  }
+
+  numToStr(value: number): string {
     return `${value < 10 ? '0' + value : value}`;
   }
 
-  msToStopwatch(milliseconds: number): Stopwatch {
-    let hundredth = milliseconds % 10;
-    console.log('hundredth:', hundredth);
-    let ms = hundredth;
-    console.log('ms:', ms);
-    if (ms % 10 === 0) {
-      this.timerInterval = Math.floor(ms / 10);
+  getTime(msecond: number): Stopwatch {
+    let milliseconds = msecond % 10;
+    if (msecond % 10 === 0) {
+      this.secondInterval = msecond / 10;
     }
-    console.log('timerInterval:', this.timerInterval);
-    let seconds = this.timerInterval % 60;
-    console.log('seconds:', seconds);
-    let hours = Math.floor(ms / 36000);
-    hundredth = ms % 36000;
-    let minutes = Math.floor(hundredth / 600);
+    let seconds = this.secondInterval % 60;
+    let minutes = Math.floor((msecond % 36000) / 600);
+    let hours = Math.floor(msecond / 36000);
 
     return {
-      hours: this.numToString(hours),
-      minutes: this.numToString(minutes),
-      seconds: this.numToString(seconds),
-      milliseconds: ms + ''
+      hours: this.numToStr(hours),
+      minutes: this.numToStr(minutes),
+      seconds: this.numToStr(seconds),
+      milliseconds: milliseconds + '',
+      started: !!msecond
     };
   }
-
 }

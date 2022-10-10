@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Observable } from 'rxjs';
 import { Stopwatch } from './domain/stopwatch';
 import { StopwatchService } from './stopwatch.service';
 
@@ -10,24 +10,22 @@ import { StopwatchService } from './stopwatch.service';
 })
 export class AppComponent {
 
-  stopwatch!: Stopwatch;
-  startBtn: boolean = true;
-  subscriptions: Subscription = new Subscription();
+  stopwatch$: Observable<Stopwatch>;
 
   constructor(private stopwatchService: StopwatchService) {
+    this.stopwatch$ = this.stopwatchService.stopwatch$;
   }
 
   start() {
-    this.startBtn = false;
     this.stopwatchService.start();
   }
 
   stop() {
-    this.startBtn = true;
     this.stopwatchService.reset();
   }
 
   wait() {
+    this.stopwatchService.wait();
   }
 
   reset() {
