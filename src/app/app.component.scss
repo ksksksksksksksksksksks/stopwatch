@@ -11,6 +11,7 @@
 
     .time {
         height: 100px;
+        width: 400px;
         background: #fff;
         display: flex;
         align-items: center;
@@ -24,6 +25,11 @@
             text-align: center;
             font-size: 50px;
             font-weight: 500;
+            width: 56px;
+
+            &.milliseconds {
+                width: 28px;
+            }
 
             &.colon, &.ms-colon {
                 width: 55px;
@@ -40,6 +46,7 @@
         margin-top: 20px;
         
         button {
+            width: 85px;
             padding: 6px 16px;
             outline: none;
             border: none;
@@ -51,6 +58,11 @@
             border-radius: 4px;
             cursor: pointer;
             box-shadow: 10px 10px 20px rgba(0,0,0,0.09);
+
+            &:hover {
+                background: rgba(255, 255, 255, 0.705);
+                color: #333;
+            }
         }
     }
 }

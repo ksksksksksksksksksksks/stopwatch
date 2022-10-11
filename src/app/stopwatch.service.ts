@@ -2,16 +2,19 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, map, Observable, Subscription, timer } from 'rxjs';
 import { Stopwatch } from './domain/stopwatch';
 
+const initialTime: number = 0;
+
 @Injectable({
   providedIn: 'root'
 })
 export class StopwatchService {
 
-  initialTime: number = 0;
-  stoppedTime: number = this.initialTime;
-  timer$: BehaviorSubject<number> = new BehaviorSubject(this.initialTime);
-  subscription!: Subscription;
-  secondInterval: number = 0;
+  public isStarted: boolean = false;
+  private stoppedTime: number = initialTime;
+  private timer$: BehaviorSubject<number> = new BehaviorSubject(initialTime);
+  private subscription!: Subscription;
+  private secondInterval: number = 0;
+  
   constructor() { }
 
   public get stopwatch$(): Observable<Stopwatch> {
@@ -22,25 +25,29 @@ export class StopwatchService {
 
   start() {
     this.subscription = timer(0, 100).pipe(
-      map((value: number): number => {
-        console.log(value + this.stoppedTime);
-        return value + this.stoppedTime;
-      }))
-      .subscribe(this.timer$);
+      map((value: number): number => value + this.stoppedTime))
+    .subscribe(this.timer$);
+    this.isStarted = true;
   }
 
   reset() {
     this.subscription.unsubscribe();
-    this.stoppedTime = this.initialTime;
-    this.timer$.next(this.initialTime);
+    this.stoppedTime = initialTime;
+    this.timer$.next(initialTime);
+  }
+
+  stop() {
+    this.reset();
+    this.isStarted = false;
   }
 
   wait() {
-    this.stoppedTime = this.timer$.value;
     this.subscription.unsubscribe();
+    this.stoppedTime = this.timer$.value;
+    this.isStarted = false;
   }
 
-  numToStr(value: number): string {
+  convertNumToStr(value: number): string {
     return `${value < 10 ? '0' + value : value}`;
   }
 
@@ -54,11 +61,10 @@ export class StopwatchService {
     let hours = Math.floor(msecond / 36000);
 
     return {
-      hours: this.numToStr(hours),
-      minutes: this.numToStr(minutes),
-      seconds: this.numToStr(seconds),
+      hours: this.convertNumToStr(hours),
+      minutes: this.convertNumToStr(minutes),
+      seconds: this.convertNumToStr(seconds),
       milliseconds: milliseconds + '',
-      started: !!msecond
     };
   }
 }

@@ -3,5 +3,4 @@ export interface Stopwatch {
   minutes: string;
   seconds: string;
   milliseconds: string;
-  started: boolean;
 }

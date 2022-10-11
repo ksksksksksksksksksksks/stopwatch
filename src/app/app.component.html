@@ -1,17 +1,17 @@
-<div class="wrapper" *ngIf="stopwatch$ | async as stopwatch">
-  <div class="time">
-    <span class="hours">{{stopwatch.hours}}</span>
+<div class="wrapper">
+  <div (mouseenter)="''" class="time">
+    <span>{{stopwatch.hours}}</span>
     <span class="colon">:</span>
-    <span class="minutes">{{stopwatch.minutes}}</span>
+    <span>{{stopwatch.minutes}}</span>
     <span class="colon">:</span>
-    <span class="seconds">{{stopwatch.seconds}}</span>
+    <span>{{stopwatch.seconds}}</span>
     <span class="colon ms-colon">:</span>
     <span class="milliseconds">{{stopwatch.milliseconds}}</span>
   </div>
   <div class="buttons">
-    <button *ngIf="!stopwatch.started" class="start-stop" (click)="start()">Start</button>
-    <button *ngIf="stopwatch.started" class="start-stop" (click)="stop()">Stop</button>
-    <button class="wait" (dblclick)="wait()">Wait</button>
-    <button class="reset" (click)="reset()">Reset</button>
+    <button *ngIf="!this.stopwatchService.isStarted" (click)="start()">Start</button>
+    <button *ngIf="this.stopwatchService.isStarted" (click)="stop()">Stop</button>
+    <button (click)="wait()">Wait</button>
+    <button (click)="reset()">Reset</button>
   </div>
 </div>
