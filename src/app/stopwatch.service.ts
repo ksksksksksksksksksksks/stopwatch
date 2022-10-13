@@ -24,10 +24,10 @@ export class StopwatchService {
   }
 
   start() {
+    this.isStarted = true;
     this.subscription = timer(0, 100).pipe(
       map((value: number): number => value + this.stoppedTime))
     .subscribe(this.timer$);
-    this.isStarted = true;
   }
 
   reset() {
@@ -37,14 +37,14 @@ export class StopwatchService {
   }
 
   stop() {
-    this.reset();
     this.isStarted = false;
+    this.reset();
   }
 
   wait() {
+    this.isStarted = false;
     this.subscription.unsubscribe();
     this.stoppedTime = this.timer$.value;
-    this.isStarted = false;
   }
 
   convertNumToStr(value: number): string {
