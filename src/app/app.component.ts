@@ -1,10 +1,19 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { buffer, bufferTime, debounceTime, filter, map, Subject, Subscription } from 'rxjs';
+import { buffer, bufferTime, debounceTime, filter, map, Observable, OperatorFunction, Subject, Subscription } from 'rxjs';
 import { Stopwatch } from './domain/stopwatch';
 import { StopwatchService } from './stopwatch.service';
 
 const timeBetweenClicks: number = 300;
 const numberOfClicks: number = 2;
+
+function bufferMapFilter(closingNotifier: Observable<any>): OperatorFunction<any, any> {
+  return (store: Observable<any>) => store
+    .pipe(
+      buffer(closingNotifier),
+      map(list => list.length),
+      filter(x => x === numberOfClicks)
+    );
+}
 
 @Component({
   selector: 'app-root',
@@ -25,16 +34,15 @@ export class AppComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.subscription = this.stopwatchService.stopwatch$
     .subscribe((value: Stopwatch) => {
-      this.stopwatch = value; 
+      this.stopwatch = value;
       this.cdr.detectChanges();
     });
 
     this.subscriptionDbClick = this.click$.pipe(
-      buffer(this.click$.pipe(
+      bufferMapFilter(this.click$.pipe(
         debounceTime(timeBetweenClicks)
-      )),
-      map(list => list.length),
-      filter(x => x === numberOfClicks))
+      ))
+    )
     .subscribe(() => {
       this.stopwatchService.wait();
       this.cdr.detectChanges();
